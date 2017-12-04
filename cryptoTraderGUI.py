@@ -25,18 +25,25 @@ import gdax
 #from gdax.gdax_auth import get_auth_headers
 
 class MyWebsocketClient(gdax.WebsocketClient):
-        def on_open(self):
-            self.url = "wss://ws-feed.gdax.com/"
-            self.products = ["BTC-USD"]
-            self.message_count = 0
+    
+    #GUIInstance = CryptoTraderGUI
+    
+    #def __init__(self, GUIInstance):
+    #self.GUIInstance = GUIInstance
+        
+    def on_open(self):
+        self.url = "wss://ws-feed.gdax.com/"
+        self.products = ["BTC-USD"]
+        self.message_count = 0
 
-        def on_message(self, msg):
-             print(json.dumps(msg, indent=4, sort_keys=True))
-             json.dumps()
-             self.message_count += 1
-
-        def on_close(self):
-            print("-- Goodbye! --")
+    def on_message(self, msg):
+        if self.GUIInstance:
+            if 'price' in msg:
+                self.GUIInstance.BTCPriceLabel.setText(msg['price'])
+                    
+    def on_close(self):
+        print("-- Goodbye! --")
+        
             
 
 """ ----------GUI Class---------- """
@@ -44,20 +51,6 @@ class MyWebsocketClient(gdax.WebsocketClient):
 class CryptoTraderGUI(QWidget):
     
     import GDAXWebsocketClient as WebsocketClient
-    
-    class MyWebsocketClient(gdax.WebsocketClient):
-        def on_open(self):
-            self.url = "wss://ws-feed.gdax.com/"
-            self.products = ["BTC-USD"]
-            self.message_count = 0
-
-        def on_message(self, msg):
-             print(json.dumps(msg, indent=4, sort_keys=True))
-             json.dumps()
-             self.message_count += 1
-
-        def on_close(self):
-            print("-- Goodbye! --")
  
     def __init__(self):
         super().__init__()
@@ -72,6 +65,7 @@ class CryptoTraderGUI(QWidget):
         
         # Create websocket connection 
         self.wsClient = MyWebsocketClient()
+        self.wsClient.GUIInstance = self
  
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -79,7 +73,6 @@ class CryptoTraderGUI(QWidget):
         
         # Create textbox
         self.BTCPriceLabel = QLabel("0.0", self)
-        #self.BTCPriceLabel.text = '0.0'
         self.BTCPriceLabel.move(80, 80)
         self.BTCPriceLabel.resize(280,40)
         self.BTCPriceLabel.setStyleSheet("QLabel {background-color: red;}")
@@ -97,9 +90,10 @@ class CryptoTraderGUI(QWidget):
     
     @pyqtSlot()
     def on_click_start(self):
-        self.BTCPriceLabel.setText("Stream Started")
+        
         self.startPriceStream()
-
+        
+        self.BTCPriceLabel.setText("Stream Started")
         self.StreamButton.setEnabled(0)
         self.StopStreamButton.setEnabled(1)
         
@@ -112,20 +106,23 @@ class CryptoTraderGUI(QWidget):
         self.StreamButton.setEnabled(1)
         self.StopStreamButton.setEnabled(0)
         
-    def startPriceStream(self):
-        self.wsClient.start()
-        print(self.wsClient.url, self.wsClient.products)
-        
-    def stopPriceStream(self):
-        self.wsClient.close()
-
-
-
+    
 
     def pollGDAX(self):
-        self.currentPrice = self.public_client.get_product_ticker(product_id='ETH-USD')
-        self.BTCPriceLabel.setText(self.currentPrice)
+        #import threading
+        #threading.Timer(5.0, pollGDAX).start()
+        #msg = self.public_client.get_product_ticker(product_id='ETH-USD')
+        #self.BTCPriceLabel.setText(self.msg)
+        print(msg)
+
+
+    def startPriceStream(self):
+        self.wsClient.start()
+        #print(self.wsClient.url, self.wsClient.products)
         
+    def stopPriceStream(self):
+        self.wsClient.stop()
+        self.wsClient.close()
 
 
 
