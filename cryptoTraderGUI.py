@@ -33,13 +33,21 @@ class MyWebsocketClient(gdax.WebsocketClient):
         
     def on_open(self):
         self.url = "wss://ws-feed.gdax.com/"
-        self.products = ["BTC-USD"]
+        self.products = ["BTC-USD", "ETH-USD"]
         self.message_count = 0
 
     def on_message(self, msg):
         if self.GUIInstance:
-            if 'price' in msg:
-                self.GUIInstance.BTCPriceLabel.setText(msg['price'])
+            if msg['type'] == "match":
+                
+                price = msg['price']                
+                i_decimal = price.index('.')
+                formattedPrice = price[0:i_decimal+3]
+                
+                if msg['product_id'] == "BTC-USD":
+                    self.GUIInstance.BTCPriceLabel.setText(formattedPrice)
+                elif msg['product_id'] == "ETH-USD":
+                    self.GUIInstance.ETHPriceLabel.setText(formattedPrice)
                     
     def on_close(self):
         print("-- Goodbye! --")
@@ -61,11 +69,8 @@ class CryptoTraderGUI(QWidget):
         self.height = 480
         self.initUI()
         
-        self.public_client = gdax.PublicClient()
-        
-        # Create websocket connection 
-        self.wsClient = MyWebsocketClient()
-        self.wsClient.GUIInstance = self
+        #self.public_client = gdax.PublicClient()
+        #self.pollGDAX()
  
     def initUI(self):
         self.setWindowTitle(self.title)
@@ -73,9 +78,21 @@ class CryptoTraderGUI(QWidget):
         
         # Create textbox
         self.BTCPriceLabel = QLabel("0.0", self)
-        self.BTCPriceLabel.move(80, 80)
-        self.BTCPriceLabel.resize(280,40)
-        self.BTCPriceLabel.setStyleSheet("QLabel {background-color: red;}")
+        self.BTCPriceLabel.move(self.width/2-125, self.height/2-20)
+        self.BTCPriceLabel.resize(100,40)
+        #self.BTCPriceLabel.setStyleSheet("QLabel {background-color: red;}")
+        self.BTCLabel = QLabel("BTC-USD", self)
+        self.BTCLabel.move(self.width/2-125, self.height/2+20)
+        self.BTCLabel.resize(100,40)
+        
+        self.ETHPriceLabel = QLabel("0.0", self)
+        self.ETHPriceLabel.move(self.width/2+25, self.height/2-20)
+        self.ETHPriceLabel.resize(100,40)
+        #self.ETHPriceLabel.setStyleSheet("QLabel {background-color: red;}")
+        
+        self.ETHLabel = QLabel("ETH-USD", self)
+        self.ETHLabel.move(self.width/2+25, self.height/2+20)
+        self.ETHLabel.resize(100,40)
  
         self.StreamButton = QPushButton("Start Data Stream", self)
         self.StreamButton.move(20,20)
@@ -87,13 +104,18 @@ class CryptoTraderGUI(QWidget):
         self.StopStreamButton.clicked.connect(self.on_click_stop)
         
         self.show()
-    
+        
     @pyqtSlot()
     def on_click_start(self):
+        
+         # Create websocket connection 
+        self.wsClient = MyWebsocketClient()
+        self.wsClient.GUIInstance = self
         
         self.startPriceStream()
         
         self.BTCPriceLabel.setText("Stream Started")
+        self.ETHPriceLabel.setText("Stream Started")
         self.StreamButton.setEnabled(0)
         self.StopStreamButton.setEnabled(1)
         
@@ -103,6 +125,7 @@ class CryptoTraderGUI(QWidget):
         self.stopPriceStream()
         
         self.BTCPriceLabel.setText("Stream Stopped")
+        self.ETHPriceLabel.setText("Stream Stopped")
         self.StreamButton.setEnabled(1)
         self.StopStreamButton.setEnabled(0)
         
@@ -110,18 +133,17 @@ class CryptoTraderGUI(QWidget):
 
     def pollGDAX(self):
         #import threading
-        #threading.Timer(5.0, pollGDAX).start()
-        #msg = self.public_client.get_product_ticker(product_id='ETH-USD')
-        #self.BTCPriceLabel.setText(self.msg)
-        print(msg)
-
+        #threading.Timer(1.0, self.pollGDAX).start()
+        msg = self.public_client.get_product_ticker(product_id='BTC-USD')
+        self.BTCPriceLabel.setText(msg['price'])
+        msg = self.public_client.get_product_ticker(product_id='ETH-USD')
+        self.ETHPriceLabel.setText(msg['price'])
 
     def startPriceStream(self):
         self.wsClient.start()
         #print(self.wsClient.url, self.wsClient.products)
         
     def stopPriceStream(self):
-        self.wsClient.stop()
         self.wsClient.close()
 
 
