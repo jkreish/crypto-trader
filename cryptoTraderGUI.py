@@ -18,10 +18,9 @@ import base64
 import hmac
 import hashlib
 import time
-import time
 from threading import Thread
-from websocket import create_connection, WebSocketConnectionClosedException
-from pymongo import MongoClient
+#from websocket import create_connection, WebSocketConnectionClosedException
+#from pymongo import MongoClient
 import gdax
 #from gdax.gdax_auth import get_auth_headers
 
