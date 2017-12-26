@@ -34,7 +34,7 @@ averageBTCPrice = averageBTCPrice.astype(np.float)
 
 
 
-start_date = '2017-9-13'
+start_date = '2017-1-1'
 
 
 # PLOTTING
