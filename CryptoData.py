@@ -107,4 +107,5 @@ combined_df = merge_dfs_on_column(list(altcoin_data.values()), list(altcoin_data
 combined_df['BTC'] = btc_usd_datasets['avg_btc_price_usd']
 
 altcoin_data['MIOTA'].to_csv('MIOTA Daily.csv', sep='\t', encoding='utf-8')
-btc_usd_datasets.to_csv('Exchanges BTC-USD Price Data.csv', sep='\t', encoding='utf-8')
+btc_usd_datasets.to_csv('Exchanges BTC-USD Price Data.csv', sep=',', encoding='utf-8')
+btc_usd_price_kraken.to_csv('KrakenBTC-USDPriceData.csv', sep=',', encoding='utf-8')
