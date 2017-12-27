@@ -18,6 +18,8 @@ import matplotlib.dates as mdates
 BTCKrakenDaily = pd.read_csv('HistoricalData/KrakenBTC-USDPriceData.csv')
 BTCExchangeDaily = pd.read_csv('HistoricalData/ExchangesBTC-USDPriceData.csv')
 BTCGDAXHourly = pd.read_csv('HistoricalData/GDAX_BTC_Hourly_Aug-Dec17.csv')
+BTCGDAX15min2017_1 = pd.read_csv('HistoricalData/GDAX_BTC_15min_2017FirstHalf.csv')
+BTCGDAX15min2017_2 = pd.read_csv('HistoricalData/GDAX_BTC_15min_2017SecondHalf.csv')
 
 # Date Array
 dates_daily = BTCExchangeDaily.iloc[:,0].values
