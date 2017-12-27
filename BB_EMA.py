@@ -47,7 +47,7 @@ hourlyCloseBTCPrice = np.array(hourlyCloseBTCPrice)
 hourlyCloseBTCPrice = hourlyCloseBTCPrice.astype(np.float)
 
 
-start_date = '2017-8-1'
+start_date = '2017-11-1'
 start_time = start_date + ' 0:00:00'
 
 # PLOTTING
@@ -78,22 +78,29 @@ DAILY['Bol_BW'] = ((DAILY['Bol_upper'] - DAILY['Bol_lower'])/DAILY['EMA20'])*100
 #Y['50d_exma'] = pandas.ewma(temp_data_set['Adj Close'], span=50)
 
 # Create HOURLY data
-HOURLY = {'close': hourlyCloseBTCPrice}
+tel = {'jack': 4098, 'sape': 4139}
+
+
+hourly_data = {'close': hourlyCloseBTCPrice}
 
 # Create dataframe
-df2 = pd.DataFrame(HOURLY)
+df2 = pd.DataFrame(hourly_data)
 
-HOURLY['EMA10-4'] = df2.rolling(10*4).mean()
-HOURLY['EMA20-4'] = df2.rolling(20*4).mean()
-HOURLY['EMA99-4'] = df2.rolling(99*4).mean()
-HOURLY['Bol_upper-4'] = HOURLY['EMA20-4'] + 2* df2.rolling(20*4).std()
-HOURLY['Bol_lower-4'] = HOURLY['EMA20-4'] - 2* df2.rolling(20*4).std()
+hourly_data['EMA10-4'] = df2.rolling(10*4).mean()
+hourly_data['EMA20-4'] = df2.rolling(20*4).mean()
+hourly_data['EMA99-4'] = df2.rolling(99*4).mean()
+hourly_data['Bol_upper-4'] = hourly_data['EMA20-4'] + 2* df2.rolling(20*4).std()
+hourly_data['Bol_lower-4'] = hourly_data['EMA20-4'] - 2* df2.rolling(20*4).std()
+hourly_data['Bol_BW-4'] = ((hourly_data['Bol_upper-4'] - hourly_data['Bol_lower-4'])/hourly_data['EMA20-4'])*100
 
-HOURLY['EMA10-2'] = df2.rolling(10*2).mean()
-HOURLY['EMA20-2'] = df2.rolling(20*2).mean()
-HOURLY['EMA99-2'] = df2.rolling(99*2).mean()
-HOURLY['Bol_upper-2'] = HOURLY['EMA20-2'] + 2* df2.rolling(20*2).std()
-HOURLY['Bol_lower-2'] = HOURLY['EMA20-2'] - 2* df2.rolling(20*2).std()
+
+
+hourly_data['EMA10-2'] = df2.rolling(10*2).mean()
+hourly_data['EMA20-2'] = df2.rolling(20*2).mean()
+hourly_data['EMA99-2'] = df2.rolling(99*2).mean()
+hourly_data['Bol_upper-2'] = hourly_data['EMA20-2'] + 2* df2.rolling(20*2).std()
+hourly_data['Bol_lower-2'] = hourly_data['EMA20-2'] - 2* df2.rolling(20*2).std()
+hourly_data['Bol_BW-2'] = ((hourly_data['Bol_upper-2'] - hourly_data['Bol_lower-2'])/hourly_data['EMA20-2'])*100
 
 #HOURLY['Bol_BW'] = ((HOURLY['Bol_upper'] - HOURLY['Bol_lower'])/HOURLY['EMA20'])*100
 
@@ -120,22 +127,23 @@ axarr[0,0].set_title('Daily Moving Averages')
 #ax1.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 #plt.gca().xaxis.set_major_locator(mdates.DayLocator())
 
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['close'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA10-4'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA20-4'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA99-4'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['Bol_upper-4'][start_hour_index:len(time_hourly_dateTime)], '--')
-axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['Bol_lower-4'][start_hour_index:len(time_hourly_dateTime)], '--')
+#axarr[1,0].plot(dates_daily_dateTime[start_daily_index:len(dates_daily_dateTime)],DAILY['average'][start_daily_index:len(dates_daily_dateTime)])
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['close'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA10-4'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA20-4'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA99-4'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['Bol_upper-4'][start_hour_index:len(time_hourly_dateTime)], '--')
+axarr[1,0].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['Bol_lower-4'][start_hour_index:len(time_hourly_dateTime)], '--')
 axarr[1,0].set_title('4 Hour Moving Averages')
 
 
 
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['close'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA10-2'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA20-2'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['EMA99-2'][start_hour_index:len(time_hourly_dateTime)])
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['Bol_upper-2'][start_hour_index:len(time_hourly_dateTime)], '--')
-axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['Bol_lower-2'][start_hour_index:len(time_hourly_dateTime)], '--')
+#axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],HOURLY['close'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA10-2'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA20-2'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['EMA99-2'][start_hour_index:len(time_hourly_dateTime)])
+axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['Bol_upper-2'][start_hour_index:len(time_hourly_dateTime)], '--')
+axarr[1,1].plot(time_hourly_dateTime[start_hour_index:len(time_hourly_dateTime)],hourly_data['Bol_lower-2'][start_hour_index:len(time_hourly_dateTime)], '--')
 axarr[1,1].set_title('2 Hour Moving Averages')
 
 
